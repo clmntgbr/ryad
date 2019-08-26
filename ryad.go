@@ -1,19 +1,26 @@
 package main
 
 import (
-	"fmt"
+	"os"
+
 	"github.com/extrame/xls"
 )
 
 func main() {
-	if xlFile, err := xls.Open("cables.xls", "utf-8"); err == nil {
-		if sheet1 := xlFile.GetSheet(3); sheet1 != nil {
-			fmt.Print("Total Lines ", sheet1.MaxRow, sheet1.Name)
-			col1 := sheet1.Row(1).Col(1)
-			for i := 0; i <= (int(sheet1.MaxRow)); i++ {
-				row1 := sheet1.Row(i)
-				col1 = row1.Col(1)
-				fmt.Print("\n", col1)
+	if xlsFile, err := xls.Open("cables.xls", "utf-8"); err == nil {
+		for i := 0; i <= xlsFile.NumSheets(); i++ { // i is the sheet number
+			if sheet := xlsFile.GetSheet(i); sheet != nil {
+				for j := 0; j <= (int(sheet.MaxRow)); j++ { // j is the row number
+					if row := sheet.Row(j); row != nil {
+						for h := 0; h <= row.LastCol(); h++ { // h is the column number
+							row := sheet.Row(j)
+							column := row.Col(h)
+							if column == "CHB_02337_AS_X31" {
+								os.Mkdir(column, 0777)
+							}
+						}
+					}
+				}
 			}
 		}
 	}
